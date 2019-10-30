@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <title>Javascript设计模式-发布订阅模式-示例一</title>
+    <style>
+    header {
+        display: flex;
+        justify-content: space-between;
+    }
+    </style>
+</head>
+
+<body>
+	<header>
+        <nav>
+            <a href="">Home</a> |
+            <a href="">List</a> |
+            <a href="">Other</a>
+        </nav>
+        <div>
+            <span>Morning: <span id='nick'>dear</span></span> |
+            <span>message(<span id='msg'>0</span>)</span> |
+            <span>购物车<span id='cartNumber'></span></span>
+        </div>
+    </header>
+    <dialog id='dialog' open>
+        <h3>登录窗口</h3>
+        <center><button id='login'>登录</button></center>
+    </dialog>
+    <script type="text/javascript">
+    var login = {
+        clientList: [],
+        
+        listen: function(key, fn) {
+            if(!this.clientList[key]) {
+                this.clientList[key] = [];
+            }
+            this.clientList[key].push(fn);
+        },
+        trigger: function() {
+            var key = Array.prototype.shift.call(arguments),
+                fns = this.clientList[key];
+
+                if(!fns || fns.length === 0) {
+                    return false;
+                }
+
+                for(var i = 0, fn; fn = fns[i++];) {
+                    fn.apply(this, arguments);
+                }
+
+        },
+        close: function() {
+            document.getElementById('dialog').open = false;
+        } 
+        
+    };
+
+    // 
+    var user = (function(){
+        login.listen( 'loginSucc', function(data){ 
+            user.setNick(data.nick);
+        });
+        return { 
+            setNick: function( nick ){ 
+                document.getElementById('nick').innerHTML = nick;
+            } 
+        }
+    })();
+
+    var message = (function(){
+        login.listen( 'loginSucc', function(data){ 
+            message.setNumber(data.msg);
+        });
+        return { 
+            setNumber: function( msg ){ 
+                document.getElementById('msg').innerHTML = msg;
+            } 
+        }
+    })();
+
+    var cart = (function(){
+        login.listen( 'loginSucc', function(data){ 
+            cart.setNumber(data.cart);
+        });
+        return { 
+            setNumber: function( cart ){ 
+                document.getElementById('cartNumber').innerHTML = cart;
+            } 
+        }
+    })();
+    
+    document.getElementById('login').onclick = function() {
+        login.trigger('loginSucc', {
+            nick: 'slx',
+            msg: 20,
+            cart: 4
+        });
+        login.close();
+    }
+    </script>
+</body>
+
+</html>
