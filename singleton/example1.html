@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Javascript设计模式-单例模式-示例一</title>
+</head>
+
+<body>
+    <button id='loginBtn'>登录</button>
+    <button id='iframeBtn'>打开iframe</button>
+    <script type="text/javascript">
+        // 可复用的单例函数
+        var getSingle = function (fn) {
+            var result;
+            return function () {
+                return result || (result = fn.apply(this, arguments));
+            }
+        };
+
+        // 创建登录框
+        var createLoginLayer = function () {
+            var div = document.createElement('div');
+            div.innerHTML = '我是登录浮窗';
+            div.style.display = 'none';
+            document.body.appendChild(div);
+            return div;
+        };
+
+        var createSingleLoginLayer = getSingle(createLoginLayer);
+
+        document.getElementById('loginBtn').onclick = function () {
+            var loginLayer = createSingleLoginLayer();
+            loginLayer.style.display = 'block';
+        };
+
+        // 创建iframe
+        var createSingleIframe = getSingle(function () {
+            var iframe = document.createElement('iframe');
+            document.body.appendChild(iframe);
+            return iframe;
+        });
+
+        document.getElementById('iframeBtn').onclick = function () {
+            var loginLayer = createSingleIframe();
+            loginLayer.src = 'http://baidu.com';
+        };
+    </script>
+</body>
+
+</html>

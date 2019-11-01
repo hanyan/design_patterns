@@ -31,8 +31,10 @@
         <center><button id='login'>登录</button></center>
     </dialog>
     <script type="text/javascript">
+
+    // 登录组件
     var login = {
-        clientList: [],
+        clientList: [], //保存订阅对象
         
         listen: function(key, fn) {
             if(!this.clientList[key]) {
