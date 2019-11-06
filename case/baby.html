@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Javascript设计模式-综合实例一</title>
+</head>
+<body>
+    <p>time</p>
+    <p>baby：allen 32months</p>
+    <p>babysitter：mum grandma</p>
+    <button id="act1">milk</button>
+    <button id="act2">play</button>
+    <button id="act3">learn</button>
+
+    <script type="text/javascript">
+        
+        var timeSlot = function(time = new Date().getHours){
+            if(time > 22 || time < 7) return 'sleeping-time';
+
+            return 'active-time';
+        }
+
+        // 
+        var FeederFactory = function(role) {
+            if(this instanceof FeederFactory) {
+                var s = new this[role]();
+                return s
+            } else {
+                return new FeederFactory(role);
+            }
+        }
+
+        // 可变
+        FeederFactory.prototype = {
+            mother: function() {
+                this.name = 'mother',
+                this.skill = ['reading', 'playing', 'bluntMilk', 'hug', 'washing', 'guideLearning']
+            },
+            grandma: function() {
+                this.name = 'grandma',
+                this.skill = ['bluntMilk', 'playing', 'hug', 'washing']
+            }
+        }
+
+        // 可变
+        var feedLib = {
+            reading: function(book) {
+                console.log('reading')
+            },
+            playing: function(game) {
+                console.log('playing')
+
+            },
+            bluntMilk: function(capacity) {
+                console.log('bluntMilk')
+
+            },
+            guideLearning: function(subject) {
+                console.log('guideLearning')
+
+            }
+        }
+
+        // 不变类
+        class Feed {
+            constructor() {
+                this.feeders = {};
+
+                this.babies = [];
+                // this.feeder = 
+                this.addFeeder('mother');
+            }
+            receive(name) {
+                if(Object.keys(this.feeders).length < 1) {
+                    return 'no feeders';
+                }
+                for(let item in this.feeders) {
+                    if(this.feeders[item].skill.indexOf(name) > -1) {
+                        return feedLib[name]();
+                    }
+                    
+                }   
+                return alert('no skills')
+
+                
+            }
+            addFeeder(role) {
+                if(!this.feeders[role]) {
+                    this.feeders[role] = new FeederFactory(role);
+                }
+                else {
+                    alert('error');
+                }
+                    
+            }
+        }
+
+        // 不变类
+        class Baby {
+            constructor({name, age, status = 'free', tired = false}) {
+                this.name = name;
+                this.age = age;
+                this.status = status;
+                this.tired = tired;
+                this.feed = new Feed();
+            }
+            order(name) {
+                this.feed.receive(name)
+            }
+
+        }
+
+        var putao = new Baby({
+            name: '葡萄', 
+            age: 2.5
+        });
+        
+        document.getElementById('act1').addEventListener('click', function(e){
+            putao.order('bluntMilk')
+        })
+
+        document.getElementById('act2').addEventListener('click', function(e){
+            putao.order('playing')
+        })
+
+        document.getElementById('act3').addEventListener('click', function(e){
+            putao.order('reading')
+        })
+
+
+        
+    </script>
+    
+</body>
+</html>

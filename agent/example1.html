@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Javascript设计模式-代理模式-示例一</title>
+</head>
+
+<body>
+    
+    <script type="text/javascript">
+        var myImage = (function () {
+
+            var imgNode = document.createElement('img');
+            document.body.appendChild(imgNode);
+
+            return function (src) {
+                imgNode.src = src;
+            }
+        })();
+
+        var proxyImage = (function () {
+            var img = new Image;
+
+            img.onload = function () {
+                myImage(this.src);
+            }
+
+            return function (src) {
+
+                myImage('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1572850816317&di=20b62361fe8cd25a00f551d160c34b83&imgtype=0&src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2F1f828e876d3b9aed1bcd3213f28db91c0e8f44589965-9droKD_fw658');
+                img.src = src;
+            }
+        })();
+
+        proxyImage('http://pic206.nipic.com/file/20190215/4599992_154216136119_2.jpg');
+    </script>
+</body>
+
+</html>

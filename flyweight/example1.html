@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Javascript设计模式-享元模式-示例一</title>
+</head>
+
+<body>
+    <script type="text/javascript">
+        var objectPoolFactory = function (createObjFn) {
+            var objectPool = [];
+
+            return {
+
+                create: function () {
+                    var obj = objectPool.length === 0 ?
+
+                        createObjFn.apply(this, arguments) : objectPool.shift();
+
+                    return obj;
+
+                },
+                recover: function (obj) {
+                    objectPool.push(obj);
+                }
+
+            }
+
+        };
+
+        var toolTipFactory = objectPoolFactory(function () {
+            var div = document.createElement('div');
+            // div.innerHTML = 'Tooltip';
+            document.body.appendChild(div);
+            return div;
+        });
+
+        var ary = [];
+
+        for (var i = 0, str; str = ['A', 'B'][i++];) {
+            var toolTip = toolTipFactory.create();
+            toolTip.innerHTML = str;
+            ary.push(toolTip);
+        };
+
+        setTimeout(function () {
+            for (var i = 0, toolTip; toolTip = ary[i++];) {
+                toolTipFactory.recover(toolTip);
+            };
+
+
+            for (var i = 0, str; str = ['A', 'B', 'C', 'D', 'E', 'F'][i++];) {
+                var toolTip = toolTipFactory.create();
+                toolTip.innerHTML = str;
+            };
+        }, 6000);
+
+        var iframeFactory = objectPoolFactory(function () {
+
+            var iframe = document.createElement('iframe');
+            document.body.appendChild(iframe);
+
+            iframe.onload = function () {
+                iframe.onload =
+                    null; // 防止 iframe 重复加载的 bug 
+                iframeFactory.recover(iframe); // iframe 加载完成之后回收节点 
+            }
+
+            return iframe;
+
+        });
+
+        var iframe1 = iframeFactory.create();
+        iframe1.src = 'http://baidu.com';
+
+        var iframe2 = iframeFactory.create();
+        iframe2.src = 'http://QQ.com';
+
+        setTimeout(function () {
+            var iframe3 = iframeFactory.create();
+            iframe3.src = 'http://163.com';
+        }, 3000);
+    </script>
+</body>
+
+</html>
